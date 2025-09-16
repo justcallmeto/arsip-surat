@@ -1,0 +1,165 @@
+@extends('layouts.app')
+
+@section('title', 'Detail Arsip Surat')
+
+@section('content')
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="fas fa-eye text-info"></i>
+        Detail Arsip Surat
+    </h1>
+    <a href="{{ route('arsip-surat.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Kembali <<
+            </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-file-alt"></i>
+                    {{ $arsipSurat->judul_surat }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Judul Surat:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        {{ $arsipSurat->judul_surat }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Kategori:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="badge bg-info fs-6">{{ $arsipSurat->kategoriSurat->nama_kategori }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Tanggal Surat:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        {{ \Carbon\Carbon::parse($arsipSurat->tanggal_surat)->format('d F Y') }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Deskripsi:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        {{ $arsipSurat->deskripsi ?? 'Tidak ada deskripsi' }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>File PDF:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        <i class="fas fa-file-pdf text-danger"></i>
+                        {{ basename($arsipSurat->file_pdf) }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Tanggal Arsip:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        {{ $arsipSurat->created_at->format('d F Y, H:i') }} WIB
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Terakhir Update:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        {{ $arsipSurat->updated_at->format('d F Y, H:i') }} WIB
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-tools"></i>
+                    Aksi
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ route('arsip-surat.download', $arsipSurat) }}"
+                        class="btn btn-success">
+                        <i class="fas fa-download"></i> Unduh File PDF
+                    </a>
+
+                    <a href="{{ route('arsip-surat.edit', $arsipSurat) }}"
+                        class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit Data
+                    </a>
+
+                    <button type="button"
+                        class="btn btn-danger"
+                        onclick="confirmDelete({{ $arsipSurat->id }}, '{{ $arsipSurat->judul_surat }}')">
+                        <i class="fas fa-trash"></i> Hapus Data
+                    </button>
+                </div>
+
+                <form id="delete-form-{{ $arsipSurat->id }}"
+                    action="{{ route('arsip-surat.destroy', $arsipSurat) }}"
+                    method="POST" style="display: none;">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header bg-secondary text-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle"></i>
+                    Informasi Kategori
+                </h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Nama Kategori:</strong><br>{{ $arsipSurat->kategoriSurat->nama_kategori }}</p>
+                <p><strong>Deskripsi Kategori:</strong><br>{{ $arsipSurat->kategoriSurat->deskripsi ?? 'Tidak ada deskripsi' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    function confirmDelete(id, judul) {
+        Swal.fire({
+            title: 'Konfirmasi Hapus',
+            text: `Apakah Anda yakin ingin menghapus surat "${judul}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+</script>
+@endpush

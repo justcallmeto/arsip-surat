@@ -1,0 +1,31 @@
+/* PDF Container */
+#pdf-container {
+    position: relative;
+    overflow: auto;
+    height: 80vh; /* bisa disesuaikan, fit layar */
+    background: white;
+    border: 1px solid #ddd;
+}
+
+/* Canvas */
+#pdf-canvas {
+    display: block;
+    margin: auto;
+}
+
+/* Text Layer */
+.textLayer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: transparent;
+    mix-blend-mode: multiply;
+    white-space: pre;
+    pointer-events: none; /* klik tetap ke canvas */
+}
+
+.textLayer > span {
+    position: absolute;
+    white-space: pre;
+    transform-origin: 0% 0%;
+}
